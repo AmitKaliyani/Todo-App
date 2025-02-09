@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const TodoList = () => {
   const [text, setText] = useState('')
   const [todo, setTodo] = useState([])
   const [isEdited, setIsEdited] = useState(false)
-  const [editTodoList, setEditTodoList] = useState(null)
+  const [editTodoList, setEditTodoList] = useState({})
 
   const addTodo = () => {
     setTodo((prev) => [...prev, { id: Date.now(), text: text, completed: false },])
@@ -29,13 +29,24 @@ const TodoList = () => {
     setTodo(editedTodo)
     setText('')
     setIsEdited(false)
-    setEditTodoList(null)
+    setEditTodoList({})
   }
 
   const toggleComplete = (id) => {
     const updatedTodo = todo.map((todo) => todo.id === id ? { ...todo, completed: !todo.completed } : todo)
     setTodo(updatedTodo)
   }
+
+  useEffect(()=>{
+    const todo = JSON.parse(localStorage.getItem("todo"))
+    if(todo && todo.length > 0){
+  setTodo(todo)
+    }
+   },[])
+
+  useEffect(()=>{
+      localStorage.setItem("todo", JSON.stringify(todo))
+  },[todo])
 
   return (
     <div className="flex justify-center min-h-screen bg-gray-100">
